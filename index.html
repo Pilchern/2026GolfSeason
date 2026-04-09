@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>2026 Golf Season — Two-Man Tour</title>
+  <meta name="description" content="Season-long two-man golf competition. Schedule, standings, handicaps, and event details.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap');
+
+    :root {
+      --green-deep:    #0d2b1e;
+      --green-dark:    #1a4031;
+      --green-mid:     #25573f;
+      --green-light:   #2e7052;
+      --gold:          #c9a84c;
+      --gold-light:    #e2c77a;
+      --gold-pale:     #f5e9c4;
+      --cream:         #f8f4ec;
+      --white:         #ffffff;
+      --border:        rgba(201,168,76,0.25);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--green-deep);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ─── NAV ──────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 60px;
+      background: rgba(13,43,30,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif; font-size: 1rem;
+      font-weight: 700; color: var(--gold); letter-spacing: 1px; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(248,244,236,0.6); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.6rem; letter-spacing: 1px; }
+    }
+
+    /* ─── HERO ─────────────────────────────────────────── */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(46,112,82,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse at 20% 100%, rgba(201,168,76,0.12) 0%, transparent 60%),
+        var(--green-deep);
+      padding: 60px 24px;
+    }
+    .hero::before, .hero::after {
+      content: ''; position: absolute; width: 180px; height: 180px;
+      border-color: var(--gold); border-style: solid; opacity: 0.3;
+    }
+    .hero::before { top: 32px; left: 32px; border-width: 2px 0 0 2px; }
+    .hero::after  { bottom: 32px; right: 32px; border-width: 0 2px 2px 0; }
+    .hero-badge {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      letter-spacing: 4px; text-transform: uppercase; color: var(--gold);
+      border: 1px solid var(--border); padding: 6px 20px; border-radius: 2px; margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700; line-height: 1.05; color: var(--white); margin-bottom: 10px;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero-subtitle {
+      font-family: 'Playfair Display', serif; font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-style: italic; color: var(--gold-light); margin-bottom: 28px;
+    }
+    .hero-desc {
+      max-width: 520px; font-size: 0.95rem; font-weight: 300;
+      color: rgba(248,244,236,0.7); margin-bottom: 48px; line-height: 1.8;
+    }
+    .divider-gold {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 48px;
+    }
+    .hero-stats { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+    .hero-stat { text-align: center; }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif; font-size: 2.8rem;
+      font-weight: 700; color: var(--gold); line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(248,244,236,0.5); margin-top: 6px;
+    }
+    .hero-nav { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-block; padding: 12px 28px; font-size: 0.82rem;
+      font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px; transition: all 0.25s ease; cursor: pointer;
+    }
+    .btn-gold { background: var(--gold); color: var(--green-deep); border: 2px solid var(--gold); }
+    .btn-gold:hover { background: var(--gold-light); border-color: var(--gold-light); }
+    .btn-outline { background: transparent; color: var(--gold); border: 2px solid var(--border); }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+
+    /* ─── SECTIONS ─────────────────────────────────────── */
+    section { padding: 80px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 5px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 14px; display: block;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700; color: var(--white); margin-bottom: 16px; line-height: 1.2;
+    }
+    .section-intro {
+      font-size: 0.95rem; font-weight: 300; color: rgba(248,244,236,0.65);
+      max-width: 600px; line-height: 1.8; margin-bottom: 52px;
+    }
+
+    /* ─── PLAYERS ──────────────────────────────────────── */
+    #players { background: var(--green-dark); }
+    .players-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 640px) { .players-grid { grid-template-columns: 1fr; } }
+    .player-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 4px; padding: 36px 32px; text-align: center; position: relative;
+    }
+    .player-card-name {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem;
+      font-weight: 700; color: var(--white); margin-bottom: 4px;
+    }
+    .player-card-label {
+      font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(248,244,236,0.4); margin-bottom: 24px;
+    }
+    .handicap-row {
+      display: flex; justify-content: center; gap: 32px; padding: 20px 0;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 20px;
+    }
+    .handicap-item { text-align: center; }
+    .handicap-value {
+      font-family: 'Playfair Display', serif; font-size: 2.2rem;
+      font-weight: 700; color: var(--gold); line-height: 1;
+    }
+    .handicap-label {
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(248,244,236,0.4); margin-top: 4px;
+    }
+    .ghin-badge {
+      display: inline-block; background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.3); padding: 8px 16px;
+      border-radius: 2px; font-size: 0.78rem; color: var(--gold-light); margin-top: 16px;
+    }
+    .ghin-link {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+      padding: 8px 16px; font-size: 0.75rem; letter-spacing: 1px;
+      color: var(--gold); border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 2px; text-decoration: none; transition: all 0.2s;
+    }
+    .ghin-link:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
+
+    /* ─── EDIT BUTTON ──────────────────────────────────── */
+    .edit-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold); padding: 6px 14px; border-radius: 2px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .edit-btn:hover { background: rgba(201,168,76,0.2); border-color: var(--gold); }
+    .edit-btn svg { width: 13px; height: 13px; }
+
+    /* ─── MODAL ────────────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      justify-content: center; align-items: center; padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--green-dark); border: 1px solid var(--border);
+      border-radius: 6px; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 28px 16px; border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-family: 'Playfair Display', serif; font-size: 1.2rem;
+      font-weight: 700; color: var(--white);
+    }
+    .modal-close {
+      background: none; border: none; color: rgba(248,244,236,0.4);
+      font-size: 1.4rem; cursor: pointer; padding: 4px 8px; transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--gold); }
+    .modal-body { padding: 24px 28px; }
+    .modal-footer {
+      padding: 16px 28px 24px; display: flex; gap: 12px; justify-content: flex-end;
+      border-top: 1px solid var(--border);
+    }
+    .field { margin-bottom: 20px; }
+    .field-label {
+      display: block; font-size: 0.72rem; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 8px; font-weight: 600;
+    }
+    .field-input {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201,168,76,0.2); border-radius: 3px;
+      color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.95rem;
+      padding: 10px 14px; outline: none; transition: border-color 0.2s;
+    }
+    .field-input:focus { border-color: var(--gold); }
+    .field-input::placeholder { color: rgba(248,244,236,0.25); }
+    select.field-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    select.field-input option { background: var(--green-dark); color: var(--cream); }
+    .field-hint { font-size: 0.72rem; color: rgba(248,244,236,0.35); margin-top: 4px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .btn-modal {
+      padding: 10px 24px; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; border-radius: 2px;
+      cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .btn-save { background: var(--gold); color: var(--green-deep); border: 2px solid var(--gold); }
+    .btn-save:hover { background: var(--gold-light); }
+    .btn-cancel { background: transparent; color: rgba(248,244,236,0.5); border: 2px solid rgba(248,244,236,0.15); }
+    .btn-cancel:hover { border-color: rgba(248,244,236,0.3); color: rgba(248,244,236,0.7); }
+    .btn-danger {
+      background: rgba(180,60,60,0.2); color: #f4a0a0; border: 2px solid rgba(180,60,60,0.3);
+      margin-right: auto;
+    }
+    .btn-danger:hover { background: rgba(180,60,60,0.35); }
+
+    /* ─── NEXT UP ──────────────────────────────────────── */
+    .next-up {
+      background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 4px; padding: 28px 32px;
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 24px; align-items: center; margin-bottom: 52px;
+    }
+    @media (max-width: 640px) { .next-up { grid-template-columns: 1fr; text-align: center; } }
+    .next-up-label { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+    .next-up-event { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--white); }
+    .next-up-detail { font-size: 0.85rem; color: rgba(248,244,236,0.55); margin-top: 4px; }
+    .next-up-date { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--gold); white-space: nowrap; }
+
+    /* ─── SCHEDULE TABLE ───────────────────────────────── */
+    #schedule { background: var(--green-deep); }
+    .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .schedule-table thead { border-bottom: 1px solid var(--border); }
+    .schedule-table th {
+      text-align: left; padding: 14px 16px; font-size: 10px;
+      letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 600;
+    }
+    .schedule-table td {
+      padding: 18px 16px; border-bottom: 1px solid rgba(201,168,76,0.1);
+      vertical-align: middle; color: rgba(248,244,236,0.8);
+    }
+    .schedule-table tr:last-child td { border-bottom: none; }
+    .schedule-table tr:hover td { background: rgba(201,168,76,0.04); }
+    .schedule-table tr.completed-row td { opacity: 0.55; }
+    .schedule-table tr.completed-row:hover td { opacity: 0.85; }
+    .event-tag {
+      display: inline-block; font-size: 9px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 2px; white-space: nowrap;
+    }
+    .tag-preseason { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+    .tag-opener    { background: rgba(46,112,82,0.4); color: #7edab4; border: 1px solid rgba(126,218,180,0.3); }
+    .tag-major     { background: rgba(180,60,60,0.25); color: #f4a0a0; border: 1px solid rgba(244,160,160,0.3); }
+    .tag-signature { background: rgba(100,100,200,0.2); color: #a0b0f4; border: 1px solid rgba(160,176,244,0.3); }
+    .pts-badge { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+    .pts-label { font-size: 0.7rem; color: rgba(248,244,236,0.4); letter-spacing: 1px; }
+    .result-winner { font-size: 0.78rem; color: var(--gold-light); font-weight: 600; }
+    .result-edit-btn {
+      display: inline-flex; align-items: center; gap: 4px; background: none;
+      border: 1px solid rgba(201,168,76,0.2); color: rgba(201,168,76,0.6);
+      padding: 4px 10px; border-radius: 2px; font-size: 0.68rem;
+      font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .result-edit-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ─── STANDINGS ─────────────────────────────────────── */
+    #standings { background: var(--green-dark); }
+    .standings-visual { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 20px; align-items: stretch; margin-bottom: 40px; }
+    @media (max-width: 640px) { .standings-visual { grid-template-columns: 1fr; } }
+    .standings-player {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 4px; padding: 32px; text-align: center;
+    }
+    .standings-player.leading { border-color: rgba(201,168,76,0.6); background: rgba(201,168,76,0.06); }
+    .standings-player-name {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem;
+      font-weight: 700; color: var(--white); margin-bottom: 16px;
+    }
+    .standings-pts {
+      font-family: 'Playfair Display', serif; font-size: 3.5rem;
+      font-weight: 700; color: var(--gold); line-height: 1;
+    }
+    .standings-pts-label {
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(248,244,236,0.4); margin-top: 4px;
+    }
+    .standings-vs {
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 1.2rem;
+      font-weight: 700; color: rgba(248,244,236,0.2);
+    }
+    .standings-event-breakdown { margin-top: 24px; text-align: left; }
+    .breakdown-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid rgba(201,168,76,0.1); font-size: 0.82rem;
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-event { color: rgba(248,244,236,0.55); }
+    .breakdown-pts { color: var(--gold); font-weight: 600; }
+    .breakdown-pts.zero { color: rgba(248,244,236,0.2); }
+    .leader-banner {
+      text-align: center; padding: 24px;
+      background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); border-radius: 4px;
+    }
+    .leader-label { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .leader-name { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--white); }
+    .leader-margin { font-size: 0.82rem; color: rgba(248,244,236,0.5); margin-top: 4px; }
+
+    /* ─── EVENTS ────────────────────────────────────────── */
+    #events { background: var(--green-deep); }
+    .events-grid { display: grid; gap: 24px; }
+    .event-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 4px; overflow: hidden; transition: border-color 0.25s, transform 0.2s;
+    }
+    .event-card:hover { border-color: rgba(201,168,76,0.55); transform: translateY(-2px); }
+    .event-card-header {
+      display: grid; grid-template-columns: auto 1fr auto;
+      align-items: center; gap: 20px; padding: 28px 32px;
+      cursor: pointer; user-select: none;
+    }
+    @media (max-width: 640px) {
+      .event-card-header { grid-template-columns: 1fr; gap: 12px; }
+      .event-number { display: none; }
+    }
+    .event-number {
+      font-family: 'Playfair Display', serif; font-size: 2.6rem;
+      font-weight: 700; color: rgba(201,168,76,0.25); line-height: 1; min-width: 52px;
+    }
+    .event-name {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem;
+      font-weight: 700; color: var(--white); margin-bottom: 6px;
+    }
+    .event-info-row {
+      display: flex; flex-wrap: wrap; gap: 16px;
+      font-size: 0.8rem; color: rgba(248,244,236,0.5);
+    }
+    .event-pts-col { text-align: right; }
+    .event-pts-num {
+      font-family: 'Playfair Display', serif; font-size: 2rem;
+      font-weight: 700; color: var(--gold); line-height: 1;
+    }
+    .event-pts-text {
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(248,244,236,0.35);
+    }
+    .chevron {
+      display: inline-block; width: 16px; height: 16px;
+      border-right: 2px solid var(--gold); border-bottom: 2px solid var(--gold);
+      transform: rotate(45deg) translateY(-3px);
+      transition: transform 0.25s; flex-shrink: 0; margin-top: 6px;
+    }
+    .open-card .chevron { transform: rotate(225deg) translateY(-3px); }
+    .event-body {
+      display: none; padding: 0 32px 32px;
+      border-top: 1px solid var(--border);
+      animation: fadeIn 0.25s ease;
+    }
+    .event-body.open { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .event-body-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding-top: 28px; }
+    @media (max-width: 640px) { .event-body-inner { grid-template-columns: 1fr; } }
+    .event-section-title {
+      font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 12px; font-weight: 600;
+    }
+    .event-body p {
+      font-size: 0.88rem; color: rgba(248,244,236,0.72); line-height: 1.75; margin-bottom: 14px;
+    }
+    .rules-list { list-style: none; }
+    .rules-list li {
+      font-size: 0.86rem; color: rgba(248,244,236,0.7);
+      padding: 7px 0; border-bottom: 1px solid rgba(201,168,76,0.1);
+      display: flex; align-items: flex-start; gap: 10px; line-height: 1.5;
+    }
+    .rules-list li:last-child { border-bottom: none; }
+    .rules-list li::before {
+      content: '\25B8'; color: var(--gold); font-size: 0.7rem; margin-top: 3px; flex-shrink: 0;
+    }
+    .format-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25);
+      padding: 8px 16px; border-radius: 2px; font-size: 0.82rem;
+      color: var(--gold-light); margin-bottom: 16px;
+    }
+
+    /* ─── POINTS ────────────────────────────────────────── */
+    #points { background: var(--green-dark); }
+    .points-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+    .points-item {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      padding: 28px 20px; text-align: center; border-radius: 4px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .points-item:hover { border-color: rgba(201,168,76,0.5); background: rgba(201,168,76,0.05); }
+    .points-item.highlight { border-color: rgba(201,168,76,0.5); background: rgba(201,168,76,0.07); }
+    .points-item-event { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(248,244,236,0.45); margin-bottom: 12px; }
+    .points-item-pts { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+    .points-item-course { font-size: 0.78rem; color: rgba(248,244,236,0.6); }
+    .total-pts-banner {
+      text-align: center; margin-top: 40px; padding: 28px;
+      background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.2); border-radius: 4px;
+    }
+    .total-pts-label { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .total-pts-num { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 700; color: var(--white); }
+
+    /* ─── RULES ─────────────────────────────────────────── */
+    #rules { background: var(--green-deep); }
+    .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 640px) { .rules-grid { grid-template-columns: 1fr; } }
+    .rules-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 4px; padding: 32px;
+    }
+    .rules-card-title {
+      font-family: 'Playfair Display', serif; font-size: 1.1rem;
+      font-weight: 700; color: var(--white); margin-bottom: 16px;
+    }
+
+    /* ─── ADMIN BAR ─────────────────────────────────────── */
+    .admin-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+      background: rgba(13,43,30,0.95); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 12px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px;
+    }
+    .admin-bar-left {
+      font-size: 0.72rem; color: rgba(248,244,236,0.4);
+      letter-spacing: 1px;
+    }
+    .admin-bar-actions { display: flex; gap: 10px; }
+
+    /* ─── TOAST ──────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      z-index: 250; background: var(--gold); color: var(--green-deep);
+      font-size: 0.82rem; font-weight: 600; letter-spacing: 1px;
+      padding: 10px 24px; border-radius: 3px;
+      opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ─── FOOTER ────────────────────────────────────────── */
+    footer {
+      background: var(--green-deep); border-top: 1px solid var(--border);
+      text-align: center; padding: 48px 24px 100px;
+    }
+    footer p {
+      font-size: 0.78rem; color: rgba(248,244,236,0.3);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  DEFAULT SEASON DATA — overridden by localStorage if present
+// ════════════════════════════════════════════════════════════
+const DEFAULT_SEASON = {
+  year: 2026,
+  players: {
+    p1: { name: "Nick",  ghin: "", handicapIndex: null },
+    p2: { name: "Scott", ghin: "", handicapIndex: null },
+  },
+  events: [
+    { id:"hangover", name:"Masters Hangover Round",     date:"April 18, 2026",     course:"Flexible local course", format:"Fun round — no official points", type:"preseason", maxPts:0,   winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"opener",   name:"Opening Tournament",         date:"May 2, 2026",        course:"Stonewall Orchard",     format:"18-hole stroke play",           type:"opener",    maxPts:100, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"major1",   name:"First Major",                date:"June 6, 2026",       course:"ThunderHawk",           format:"18-hole stroke play (+ optional pressure loop)", type:"major", maxPts:250, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"sig1",     name:"Bittersweet Redemption Round",date:"July 18, 2026",     course:"Bittersweet",           format:"18-hole match play",            type:"signature", maxPts:150, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"major2",   name:"Second Major",               date:"August 22, 2026",    course:"Bowes Creek",           format:"18-hole stroke play",           type:"major",     maxPts:300, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"sig2",     name:"Signature Round 2",          date:"September 19, 2026", course:"Chalet Hills",          format:"Front 9 match play · Back 9 stroke play", type:"signature", maxPts:150, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"final",    name:"Final Major",                date:"October 10, 2026",   course:"Stonewall Orchard",     format:"18-hole final major",           type:"major",     maxPts:400, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+  ],
+};
+
+// Load from localStorage or use defaults
+function loadSeason() {
+  try {
+    const saved = localStorage.getItem('golf2026');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_SEASON));
+}
+function saveSeason() {
+  try { localStorage.setItem('golf2026', JSON.stringify(SEASON)); } catch(e) {}
+}
+
+let SEASON = loadSeason();
+
+// Helpers
+function totalPts(who) { return SEASON.events.reduce((s,e) => s + (who==='p1' ? e.p1pts : e.p2pts), 0); }
+function nextEvent() { return SEASON.events.find(e => e.winner === null); }
+function eventsPlayed() { return SEASON.events.filter(e => e.winner !== null).length; }
+const tagClass = { preseason:'tag-preseason', opener:'tag-opener', major:'tag-major', signature:'tag-signature' };
+const tagLabel = { preseason:'Pre-Season', opener:'Opener', major:'Major', signature:'Signature' };
+
+// Edit pencil SVG
+const PENCIL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`;
+
+// Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── Full Re-render ──────────────────────────────────────
+function render() {
+  renderHero();
+  renderPlayers();
+  renderNextUp();
+  renderSchedule();
+  renderStandings();
+  renderEvents();
+  renderPoints();
+}
+
+function renderHero() {
+  document.getElementById('hero-played').textContent = eventsPlayed();
+}
+
+function renderPlayers() {
+  const grid = document.getElementById('players-grid');
+  grid.innerHTML = '';
+  ['p1','p2'].forEach(key => {
+    const p = SEASON.players[key];
+    const pts = totalPts(key);
+    const hi = p.handicapIndex !== null ? Number(p.handicapIndex).toFixed(1) : '—';
+    const ghinDisplay = p.ghin || '—';
+    const ghinUrl = p.ghin ? `https://www.ghin.com/golfer/${p.ghin}` : 'https://www.ghin.com';
+    grid.innerHTML += `
+      <div class="player-card">
+        <div style="position:absolute;top:16px;right:16px;">
+          <button class="edit-btn" onclick="openPlayerModal('${key}')">${PENCIL} Edit</button>
+        </div>
+        <div class="player-card-name">${p.name}</div>
+        <div class="player-card-label">GHIN #${ghinDisplay}</div>
+        <div class="handicap-row">
+          <div class="handicap-item">
+            <div class="handicap-value">${hi}</div>
+            <div class="handicap-label">Handicap Index</div>
+          </div>
+          <div class="handicap-item">
+            <div class="handicap-value">${pts}</div>
+            <div class="handicap-label">Season Points</div>
+          </div>
+        </div>
+        <div class="ghin-badge">Handicaps tracked via USGA GHIN App</div>
+        <br>
+        <a class="ghin-link" href="${ghinUrl}" target="_blank" rel="noopener">View GHIN Profile &rarr;</a>
+      </div>`;
+  });
+}
+
+function renderNextUp() {
+  const ne = nextEvent();
+  const c = document.getElementById('next-up-container');
+  if (!ne) { c.innerHTML = `<div class="next-up" style="justify-content:center;text-align:center;"><div><div class="next-up-label">Season Complete</div><div class="next-up-event">All events have been played</div></div></div>`; return; }
+  c.innerHTML = `
+    <div class="next-up">
+      <div>
+        <div class="next-up-label">Next Event</div>
+        <div class="next-up-event">${ne.name}</div>
+        <div class="next-up-detail">${ne.course} &middot; ${ne.format}</div>
+      </div>
+      <div></div>
+      <div class="next-up-date">${ne.date}</div>
+    </div>`;
+}
+
+function renderSchedule() {
+  const tbody = document.getElementById('schedule-body');
+  tbody.innerHTML = '';
+  SEASON.events.forEach((e, i) => {
+    const played = e.winner !== null;
+    const rowClass = played ? 'completed-row' : '';
+    const ptsCell = e.maxPts === 0
+      ? `<span style="color:rgba(248,244,236,0.35);font-style:italic;font-size:0.85rem;">—</span>`
+      : `<div class="pts-badge">${e.maxPts}</div><div class="pts-label">pts</div>`;
+    let resultCell = `<button class="result-edit-btn" onclick="openEventModal(${i})">${PENCIL} Enter</button>`;
+    if (played && e.type !== 'preseason') {
+      const winnerName = e.winner === 'tie' ? 'Tied' : SEASON.players[e.winner].name;
+      resultCell = `<span class="result-winner">${winnerName}</span>`;
+      if (e.note) resultCell += `<br><span style="font-size:0.72rem;color:rgba(248,244,236,0.4);">${e.note}</span>`;
+      resultCell += `<br><button class="result-edit-btn" style="margin-top:6px;" onclick="openEventModal(${i})">${PENCIL} Edit</button>`;
+    } else if (played && e.type === 'preseason') {
+      resultCell = `<span style="font-size:0.75rem;color:rgba(248,244,236,0.35);">Played</span>`;
+      resultCell += `<br><button class="result-edit-btn" style="margin-top:4px;" onclick="openEventModal(${i})">${PENCIL} Edit</button>`;
+    }
+    tbody.innerHTML += `
+      <tr class="${rowClass}">
+        <td>${e.date}</td>
+        <td>
+          <div style="margin-bottom:6px;"><strong style="color:var(--white);">${e.name}</strong></div>
+          <span class="event-tag ${tagClass[e.type]}">${tagLabel[e.type]}</span>
+        </td>
+        <td>${e.course}</td>
+        <td>${e.format}</td>
+        <td style="text-align:right;">${ptsCell}</td>
+        <td style="text-align:right;">${resultCell}</td>
+      </tr>`;
+  });
+}
+
+function renderStandings() {
+  const p1pts = totalPts('p1'), p2pts = totalPts('p2');
+  const p1lead = p1pts > p2pts, p2lead = p2pts > p1pts;
+  const vis = document.getElementById('standings-visual');
+  vis.innerHTML = `
+    <div class="standings-player ${p1lead ? 'leading' : ''}">
+      <div class="standings-player-name">${SEASON.players.p1.name}</div>
+      <div class="standings-pts">${p1pts}</div>
+      <div class="standings-pts-label">Points</div>
+      <div class="standings-event-breakdown">
+        ${SEASON.events.filter(e=>e.maxPts>0).map(e=>
+          `<div class="breakdown-row"><span class="breakdown-event">${e.name}</span><span class="breakdown-pts ${e.p1pts===0?'zero':''}">${e.p1pts||'—'}</span></div>`
+        ).join('')}
+      </div>
+    </div>
+    <div class="standings-vs">VS</div>
+    <div class="standings-player ${p2lead ? 'leading' : ''}">
+      <div class="standings-player-name">${SEASON.players.p2.name}</div>
+      <div class="standings-pts">${p2pts}</div>
+      <div class="standings-pts-label">Points</div>
+      <div class="standings-event-breakdown">
+        ${SEASON.events.filter(e=>e.maxPts>0).map(e=>
+          `<div class="breakdown-row"><span class="breakdown-event">${e.name}</span><span class="breakdown-pts ${e.p2pts===0?'zero':''}">${e.p2pts||'—'}</span></div>`
+        ).join('')}
+      </div>
+    </div>`;
+  const banner = document.getElementById('leader-banner');
+  if (p1pts === 0 && p2pts === 0) {
+    banner.innerHTML = `<div class="leader-label">Season Status</div><div class="leader-name">Not Yet Started</div><div class="leader-margin">Check back after the Opening Tournament</div>`;
+  } else if (p1pts === p2pts) {
+    banner.innerHTML = `<div class="leader-label">Season Status</div><div class="leader-name">All Square</div><div class="leader-margin">Tied at ${p1pts} points</div>`;
+  } else {
+    const leader = p1lead ? SEASON.players.p1.name : SEASON.players.p2.name;
+    const trailer = p1lead ? SEASON.players.p2.name : SEASON.players.p1.name;
+    const margin = Math.abs(p1pts - p2pts);
+    banner.innerHTML = `<div class="leader-label">Current Leader</div><div class="leader-name">${leader}</div><div class="leader-margin">Leads ${trailer} by ${margin} point${margin!==1?'s':''}</div>`;
+  }
+}
+
+// Event details content
+const EVENT_DETAILS = {
+  hangover: {
+    c1t:'Purpose & Intent',
+    c1:`<p>This is the round after the Masters. No season points, no overthinking — just one round to shake off rust and build anticipation for the official opener.</p><p>First GHIN post of the season. Set or confirm starting handicaps.</p>`,
+    c2t:'Rules',
+    c2:`<ul class="rules-list"><li>No official points awarded</li><li>Light side bets only</li><li>Post score to GHIN</li><li>Optional: loser buys post-round drinks</li></ul>`
+  },
+  opener: {
+    c1t:'Why This Course',
+    c1:`<p>Stonewall Orchard feels like a real event. Enough challenge and polish to make the season feel official from day one.</p><div class="format-badge">&#9971; 18-hole stroke play &middot; Gross score wins</div>`,
+    c2t:'Objectives',
+    c2:`<ul class="rules-list"><li>Officially kick off the 2026 season</li><li>Set the first standings entry</li><li>Post scores to GHIN</li></ul>`
+  },
+  major1: {
+    c1t:'Why This Course',
+    c1:`<p>ThunderHawk delivers major-championship energy. The cleanest local-ish major venue.</p><div class="format-badge">&#127942; Option A: 18-hole stroke play</div><div class="format-badge">&#128293; Option B: 18 + 9-hole pressure loop</div>`,
+    c2t:'Major Rules',
+    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>All scores posted to GHIN</li></ul>`
+  },
+  sig1: {
+    c1t:'The Story',
+    c1:`<p>The emotional centerpiece of the season. Last year ended badly here. This is a return, a test of composure, a built-in story point.</p><div class="format-badge">&#9876; 18-hole match play</div>`,
+    c2t:'Signature Rules',
+    c2:`<ul class="rules-list"><li><strong style="color:var(--gold);">No quitting under any circumstances</strong></li><li>All putts holed out</li><li>Quitting = automatic event loss</li><li>Optional: 3-hole deduction for quitting</li><li>Post adjusted gross to GHIN</li></ul>`
+  },
+  major2: {
+    c1t:'Why This Course',
+    c1:`<p>Bowes Creek feels elevated while providing a different test than ThunderHawk. Keeps the major circuit fresh heading into the stretch.</p><div class="format-badge">&#127942; 18-hole stroke play</div><p>At 300 points, the heaviest event before the finale.</p>`,
+    c2t:'Major Rules',
+    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>All scores posted to GHIN</li></ul>`
+  },
+  sig2: {
+    c1t:'A Split Format',
+    c1:`<p>A unique two-phase format. The front nine is a battle; the back nine is a grind.</p><div class="format-badge">&#9876; Front 9: match play</div><div class="format-badge">&#9997; Back 9: stroke play</div>`,
+    c2t:'Why It Works',
+    c2:`<ul class="rules-list"><li>Natural in-round pivot point</li><li>Tests aggression and discipline</li><li>Combined result determines winner</li><li>Post full 18-hole score to GHIN</li></ul>`
+  },
+  final: {
+    c1t:'The Season Finale',
+    c1:`<p>The same course that opened the season closes it. At 400 points, the Final Major can swing the entire standings. No lead is safe.</p><div class="format-badge">&#127942; 18-hole final major</div>`,
+    c2t:'Major Rules',
+    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>400 points: a single round can reverse the season</li><li>Final GHIN post of the competitive season</li></ul>`
+  }
+};
+
+function renderEvents() {
+  const grid = document.getElementById('events-grid');
+  grid.innerHTML = '';
+  SEASON.events.forEach((e, i) => {
+    const d = EVENT_DETAILS[e.id];
+    const ptsHtml = e.maxPts > 0
+      ? `<div class="event-pts-num">${e.maxPts}</div><div class="event-pts-text">Points</div>`
+      : `<div style="font-size:0.8rem;color:rgba(248,244,236,0.3);font-style:italic;">No Points</div>`;
+    grid.innerHTML += `
+      <div class="event-card" id="card-${i}">
+        <div class="event-card-header" onclick="toggleCard(${i})">
+          <div class="event-number">${String(i).padStart(2,'0')}</div>
+          <div>
+            <div class="event-name">${e.name}</div>
+            <div class="event-info-row">
+              <span class="event-tag ${tagClass[e.type]}" style="font-size:8px;">${tagLabel[e.type]}</span>
+              <span class="event-info-item">${e.date}</span>
+              <span class="event-info-item">${e.course}</span>
+            </div>
+          </div>
+          <div class="event-pts-col">
+            ${ptsHtml}
+            <div class="chevron"></div>
+          </div>
+        </div>
+        <div class="event-body" id="body-${i}">
+          <div class="event-body-inner">
+            <div><div class="event-section-title">${d.c1t}</div>${d.c1}</div>
+            <div><div class="event-section-title">${d.c2t}</div>${d.c2}</div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderPoints() {
+  const grid = document.getElementById('points-grid');
+  grid.innerHTML = '';
+  SEASON.events.filter(e=>e.maxPts>0).forEach(e => {
+    const hl = e.id === 'final' ? 'highlight' : '';
+    const sz = e.id === 'final' ? 'font-size:3.8rem;' : '';
+    grid.innerHTML += `
+      <div class="points-item ${hl}">
+        <div class="points-item-event">${e.name}</div>
+        <div class="points-item-pts" style="${sz}">${e.maxPts}</div>
+        <div class="points-item-course">${e.course}</div>
+      </div>`;
+  });
+}
+
+function toggleCard(i) {
+  document.getElementById('body-'+i).classList.toggle('open');
+  document.getElementById('card-'+i).classList.toggle('open-card');
+}
+
+// ── MODALS ──────────────────────────────────────────────
+
+// Player edit modal
+function openPlayerModal(key) {
+  const p = SEASON.players[key];
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">Edit Player</div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label">Name</label>
+        <input class="field-input" id="m-name" type="text" value="${p.name}" placeholder="Player name">
+      </div>
+      <div class="field">
+        <label class="field-label">GHIN Number</label>
+        <input class="field-input" id="m-ghin" type="text" value="${p.ghin||''}" placeholder="e.g. 1234567">
+        <div class="field-hint">Found on your GHIN card or in the GHIN app</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Current Handicap Index</label>
+        <input class="field-input" id="m-hcp" type="number" step="0.1" value="${p.handicapIndex!==null?p.handicapIndex:''}" placeholder="e.g. 14.2">
+        <div class="field-hint">Update this whenever your GHIN index changes</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-modal btn-save" onclick="savePlayer('${key}')">Save</button>
+    </div>`;
+  overlay.classList.add('open');
+}
+
+function savePlayer(key) {
+  const name = document.getElementById('m-name').value.trim();
+  const ghin = document.getElementById('m-ghin').value.trim();
+  const hcp  = document.getElementById('m-hcp').value;
+  if (name) SEASON.players[key].name = name;
+  SEASON.players[key].ghin = ghin;
+  SEASON.players[key].handicapIndex = hcp !== '' ? parseFloat(hcp) : null;
+  saveSeason();
+  closeModal();
+  render();
+  showToast('Player updated');
+}
+
+// Event result modal
+function openEventModal(idx) {
+  const e = SEASON.events[idx];
+  const p1name = SEASON.players.p1.name;
+  const p2name = SEASON.players.p2.name;
+  const isPreseason = e.type === 'preseason';
+
+  let winnerOptions = `<option value="">Not yet played</option>`;
+  if (isPreseason) {
+    winnerOptions += `<option value="played" ${e.winner==='played'?'selected':''}>Played (no points)</option>`;
+  } else {
+    winnerOptions += `
+      <option value="p1" ${e.winner==='p1'?'selected':''}>${p1name}</option>
+      <option value="p2" ${e.winner==='p2'?'selected':''}>${p2name}</option>
+      <option value="tie" ${e.winner==='tie'?'selected':''}>Tie / Split</option>`;
+  }
+
+  const ptsFields = isPreseason ? '' : `
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">${p1name}'s Points</label>
+        <input class="field-input" id="m-p1pts" type="number" min="0" max="${e.maxPts}" value="${e.p1pts}" placeholder="0">
+        <div class="field-hint">Max ${e.maxPts}</div>
+      </div>
+      <div class="field">
+        <label class="field-label">${p2name}'s Points</label>
+        <input class="field-input" id="m-p2pts" type="number" min="0" max="${e.maxPts}" value="${e.p2pts}" placeholder="0">
+        <div class="field-hint">Max ${e.maxPts}</div>
+      </div>
+    </div>`;
+
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">${e.name}</div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:0.82rem;color:rgba(248,244,236,0.45);margin-bottom:24px;">
+        ${e.date} &middot; ${e.course} &middot; ${e.format}
+      </div>
+      <div class="field">
+        <label class="field-label">Winner</label>
+        <select class="field-input" id="m-winner">${winnerOptions}</select>
+      </div>
+      ${ptsFields}
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">${p1name}'s Score</label>
+          <input class="field-input" id="m-p1score" type="number" value="${e.p1score||''}" placeholder="e.g. 87">
+          <div class="field-hint">Gross score for GHIN</div>
+        </div>
+        <div class="field">
+          <label class="field-label">${p2name}'s Score</label>
+          <input class="field-input" id="m-p2score" type="number" value="${e.p2score||''}" placeholder="e.g. 92">
+          <div class="field-hint">Gross score for GHIN</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Note</label>
+        <input class="field-input" id="m-note" type="text" value="${e.note||''}" placeholder="e.g. Won by 3 strokes">
+        <div class="field-hint">Optional — shown in the schedule</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      ${e.winner !== null ? `<button class="btn-modal btn-danger" onclick="clearEvent(${idx})">Clear Result</button>` : ''}
+      <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-modal btn-save" onclick="saveEvent(${idx})">Save</button>
+    </div>`;
+  overlay.classList.add('open');
+}
+
+function saveEvent(idx) {
+  const e = SEASON.events[idx];
+  const winner = document.getElementById('m-winner').value || null;
+  e.winner = winner;
+
+  if (e.type !== 'preseason') {
+    const p1pts = document.getElementById('m-p1pts');
+    const p2pts = document.getElementById('m-p2pts');
+    if (p1pts) e.p1pts = parseInt(p1pts.value) || 0;
+    if (p2pts) e.p2pts = parseInt(p2pts.value) || 0;
+  }
+
+  const p1s = document.getElementById('m-p1score').value;
+  const p2s = document.getElementById('m-p2score').value;
+  e.p1score = p1s !== '' ? parseInt(p1s) : null;
+  e.p2score = p2s !== '' ? parseInt(p2s) : null;
+  e.note = document.getElementById('m-note').value.trim() || null;
+
+  saveSeason();
+  closeModal();
+  render();
+  showToast('Result saved');
+}
+
+function clearEvent(idx) {
+  const e = SEASON.events[idx];
+  e.winner = null; e.p1pts = 0; e.p2pts = 0; e.p1score = null; e.p2score = null; e.note = null;
+  saveSeason();
+  closeModal();
+  render();
+  showToast('Result cleared');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// Reset all data
+function resetAll() {
+  if (confirm('Reset all season data to defaults? This cannot be undone.')) {
+    SEASON = JSON.parse(JSON.stringify(DEFAULT_SEASON));
+    saveSeason();
+    render();
+    showToast('All data reset');
+  }
+}
+
+// Export data as JSON
+function exportData() {
+  const blob = new Blob([JSON.stringify(SEASON, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'golf-season-2026-data.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Data exported');
+}
+
+// Import data from JSON
+function importData() {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json';
+  inp.onchange = (ev) => {
+    const file = ev.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (re) => {
+      try {
+        const data = JSON.parse(re.target.result);
+        if (data.players && data.events) {
+          SEASON = data;
+          saveSeason();
+          render();
+          showToast('Data imported successfully');
+        } else {
+          alert('Invalid data file.');
+        }
+      } catch(e) { alert('Could not parse file.'); }
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+</script>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">&#9971; 2026 Tour</a>
+  <ul class="nav-links">
+    <a href="#players">Players</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#standings">Standings</a>
+    <a href="#events">Events</a>
+    <a href="#rules">Rules</a>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="hero">
+  <div class="hero-badge">Season &middot; Two-Man Tour &middot; 2026</div>
+  <h1>The <span>2026</span><br>Golf Season</h1>
+  <p class="hero-subtitle">Inspired by the spirit of Chasing Scratch</p>
+  <p class="hero-desc">
+    A season-long two-man competition with a real narrative arc &mdash; tentpole majors,
+    signature events, and enough structure to make every big round matter.
+    Handicaps tracked officially through GHIN.
+  </p>
+  <div class="divider-gold"></div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">Events</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">Majors</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">1,350</div><div class="hero-stat-label">Points Available</div></div>
+    <div class="hero-stat"><div class="hero-stat-num" id="hero-played">0</div><div class="hero-stat-label">Events Played</div></div>
+  </div>
+  <div class="hero-nav">
+    <a href="#schedule" class="btn btn-gold">View Schedule</a>
+    <a href="#standings" class="btn btn-outline">Standings</a>
+  </div>
+</section>
+
+<!-- PLAYERS -->
+<section id="players">
+  <div class="container">
+    <span class="section-label">The Competitors</span>
+    <h2 class="section-title">Player Profiles</h2>
+    <p class="section-intro">
+      Handicaps tracked officially through the USGA GHIN system.
+      Playing by near-official PGA-style rules all season &mdash; real scores, real handicaps.
+    </p>
+    <div class="players-grid" id="players-grid"></div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="container">
+    <span class="section-label">Full Calendar</span>
+    <h2 class="section-title">2026 Schedule</h2>
+    <p class="section-intro">Six months of golf, seven events, one champion.</p>
+    <div id="next-up-container"></div>
+    <table class="schedule-table">
+      <thead><tr>
+        <th>Date</th><th>Event</th><th>Course</th><th>Format</th>
+        <th style="text-align:right;">Points</th><th style="text-align:right;">Result</th>
+      </tr></thead>
+      <tbody id="schedule-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- STANDINGS -->
+<section id="standings">
+  <div class="container">
+    <span class="section-label">Season Race</span>
+    <h2 class="section-title">Standings</h2>
+    <p class="section-intro">The official season points race. Updated after every event.</p>
+    <div class="standings-visual" id="standings-visual"></div>
+    <div class="leader-banner" id="leader-banner"></div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section id="events">
+  <div class="container">
+    <span class="section-label">Event Guide</span>
+    <h2 class="section-title">Event Rundown</h2>
+    <p class="section-intro">Every event has its own story. Click any card to expand format, rules, and intent.</p>
+    <div class="events-grid" id="events-grid"></div>
+  </div>
+</section>
+
+<!-- POINTS -->
+<section id="points">
+  <div class="container">
+    <span class="section-label">Points System</span>
+    <h2 class="section-title">What's on the Line</h2>
+    <p class="section-intro">Points scale with event importance. The Final Major alone can reverse the entire season.</p>
+    <div class="points-grid" id="points-grid"></div>
+    <div class="total-pts-banner">
+      <div class="total-pts-label">Total Available Points</div>
+      <div class="total-pts-num">1,350</div>
+    </div>
+  </div>
+</section>
+
+<!-- RULES -->
+<section id="rules">
+  <div class="container">
+    <span class="section-label">Standards of Play</span>
+    <h2 class="section-title">Season Rules</h2>
+    <p class="section-intro">Near-official PGA-style rules, real scores posted to GHIN, no cutting corners.</p>
+    <div class="rules-grid">
+      <div class="rules-card">
+        <div class="rules-card-title">Scoring & Handicaps</div>
+        <ul class="rules-list">
+          <li>All scores posted to GHIN after every competitive round</li>
+          <li>Handicap Index maintained through the USGA GHIN app</li>
+          <li>Gross score determines event winner unless otherwise noted</li>
+          <li>Net score side bets are optional and event-specific</li>
+          <li>Pre-round handicap verification before each event</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">On-Course Standards</div>
+        <ul class="rules-list">
+          <li>Putt everything out — no gimmies during official events</li>
+          <li>Play the ball down (lift, clean, and place only if course mandates)</li>
+          <li>No soft concessions in stroke play</li>
+          <li>USGA Rules of Golf apply for all rulings and drops</li>
+          <li>Scorecards signed and attested after each round</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Major Championships</div>
+        <ul class="rules-list">
+          <li>Three majors carry the heaviest point values (250, 300, 400)</li>
+          <li>Strictest conditions: no gimmies, no concessions, ball played down</li>
+          <li>Final Major at 400 points can swing the entire season</li>
+          <li>Optional expanded format for First Major</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Signature Events</div>
+        <ul class="rules-list">
+          <li>Bittersweet: <strong style="color:var(--gold);">No quitting under any circumstances</strong></li>
+          <li>Quitting at Bittersweet = automatic event loss + optional 3-hole deduction</li>
+          <li>All putts holed out at signature events</li>
+          <li>Chalet Hills: front 9 match play, back 9 stroke play</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="divider-gold" style="margin-bottom:28px;"></div>
+  <p>2026 Golf Season &nbsp;&middot;&nbsp; Two-Man Tour &nbsp;&middot;&nbsp; Inspired by Chasing Scratch</p>
+  <p style="margin-top:10px;">May the best man win.</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ADMIN BAR -->
+<div class="admin-bar">
+  <div class="admin-bar-left">Season data saved in your browser</div>
+  <div class="admin-bar-actions">
+    <button class="edit-btn" onclick="exportData()" style="font-size:0.65rem;">Export Data</button>
+    <button class="edit-btn" onclick="importData()" style="font-size:0.65rem;">Import Data</button>
+    <button class="edit-btn" onclick="resetAll()" style="font-size:0.65rem;border-color:rgba(180,60,60,0.4);color:#f4a0a0;">Reset All</button>
+  </div>
+</div>
+
+<!-- Initial render -->
+<script>render();</script>
+
+</body>
+</html>
