@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>2026 Golf Season — Two-Man Tour</title>
   <meta name="description" content="Season-long two-man golf competition. Schedule, standings, handicaps, and event details.">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap');
 
@@ -486,6 +489,20 @@
     }
     .toast.show { opacity: 1; }
 
+    /* ─── SYNC STATUS ───────────────────────────────────── */
+    .sync-dot {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;
+      vertical-align: middle;
+    }
+    .sync-dot.connected { background: #4caf50; box-shadow: 0 0 6px rgba(76,175,80,0.5); }
+    .sync-dot.local     { background: var(--gold); }
+    .sync-dot.offline   { background: #f44336; }
+    .setup-link {
+      color: var(--gold); text-decoration: underline; cursor: pointer;
+      font-size: 0.72rem;
+    }
+    .setup-link:hover { color: var(--gold-light); }
+
     /* ─── FOOTER ────────────────────────────────────────── */
     footer {
       background: var(--green-deep); border-top: 1px solid var(--border);
@@ -520,19 +537,97 @@ const DEFAULT_SEASON = {
   ],
 };
 
+// ════════════════════════════════════════════════════════════
+//  FIREBASE CONFIG — Paste your Firebase config here!
+//  See DEPLOY.md for step-by-step setup instructions.
+//  Leave as null to use local-only mode (no sync).
+// ════════════════════════════════════════════════════════════
+const FIREBASE_CONFIG = null;
+// Example (replace with your own):
+// const FIREBASE_CONFIG = {
+//   apiKey: "AIzaSy...",
+//   authDomain: "your-project.firebaseapp.com",
+//   databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+//   projectId: "your-project",
+//   storageBucket: "your-project.appspot.com",
+//   messagingSenderId: "123456789",
+//   appId: "1:123456789:web:abc123"
+// };
+// ════════════════════════════════════════════════════════════
+
+let db = null;
+let firebaseConnected = false;
+
+// Initialize Firebase if configured
+if (FIREBASE_CONFIG && FIREBASE_CONFIG.databaseURL) {
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.database();
+    firebaseConnected = true;
+  } catch(e) {
+    console.warn('Firebase init failed:', e);
+  }
+}
+
 // Load from localStorage or use defaults
-function loadSeason() {
+function loadSeasonLocal() {
   try {
     const saved = localStorage.getItem('golf2026');
     if (saved) return JSON.parse(saved);
   } catch(e) {}
   return JSON.parse(JSON.stringify(DEFAULT_SEASON));
 }
-function saveSeason() {
+
+function saveSeasonLocal() {
   try { localStorage.setItem('golf2026', JSON.stringify(SEASON)); } catch(e) {}
 }
 
-let SEASON = loadSeason();
+// Save: writes to both localStorage and Firebase
+function saveSeason() {
+  saveSeasonLocal();
+  if (db) {
+    db.ref('season').set(SEASON).catch(e => console.warn('Firebase write failed:', e));
+  }
+}
+
+let SEASON = loadSeasonLocal();
+
+// If Firebase is connected, listen for real-time updates
+if (db) {
+  db.ref('season').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data && data.players && data.events) {
+      SEASON = data;
+      saveSeasonLocal(); // keep localStorage in sync
+      render();
+      updateSyncStatus('connected');
+    }
+  }, (err) => {
+    console.warn('Firebase read error:', err);
+    updateSyncStatus('offline');
+  });
+
+  // Connection state monitoring
+  db.ref('.info/connected').on('value', (snap) => {
+    updateSyncStatus(snap.val() ? 'connected' : 'offline');
+  });
+} else {
+  // No Firebase — push local data as initial state if Firebase gets set up later
+  // For now just mark as local mode
+  setTimeout(() => updateSyncStatus('local'), 100);
+}
+
+function updateSyncStatus(status) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  if (status === 'connected') {
+    el.innerHTML = `<span class="sync-dot connected"></span>Synced live via Firebase`;
+  } else if (status === 'local') {
+    el.innerHTML = `<span class="sync-dot local"></span>Local only &mdash; <span class="setup-link" onclick="openFirebaseHelp()">set up sync</span>`;
+  } else {
+    el.innerHTML = `<span class="sync-dot offline"></span>Offline &mdash; changes saved locally`;
+  }
+}
 
 // Helpers
 function totalPts(who) { return SEASON.events.reduce((s,e) => s + (who==='p1' ? e.p1pts : e.p2pts), 0); }
@@ -877,12 +972,25 @@ function openEventModal(idx) {
       <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <div style="font-size:0.82rem;color:rgba(248,244,236,0.45);margin-bottom:24px;">
-        ${e.date} &middot; ${e.course} &middot; ${e.format}
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Date</label>
+          <input class="field-input" id="m-date" type="text" value="${e.date}" placeholder="e.g. May 2, 2026">
+        </div>
+        <div class="field">
+          <label class="field-label">Course</label>
+          <input class="field-input" id="m-course" type="text" value="${e.course}" placeholder="Course name">
+        </div>
       </div>
-      <div class="field">
-        <label class="field-label">Winner</label>
-        <select class="field-input" id="m-winner">${winnerOptions}</select>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Format</label>
+          <input class="field-input" id="m-format" type="text" value="${e.format}" placeholder="e.g. 18-hole stroke play">
+        </div>
+        <div class="field">
+          <label class="field-label">Winner</label>
+          <select class="field-input" id="m-winner">${winnerOptions}</select>
+        </div>
       </div>
       ${ptsFields}
       <div class="field-row">
@@ -913,6 +1021,15 @@ function openEventModal(idx) {
 
 function saveEvent(idx) {
   const e = SEASON.events[idx];
+
+  // Save editable event details
+  const newDate = document.getElementById('m-date').value.trim();
+  const newCourse = document.getElementById('m-course').value.trim();
+  const newFormat = document.getElementById('m-format').value.trim();
+  if (newDate) e.date = newDate;
+  if (newCourse) e.course = newCourse;
+  if (newFormat) e.format = newFormat;
+
   const winner = document.getElementById('m-winner').value || null;
   e.winner = winner;
 
@@ -967,6 +1084,48 @@ function exportData() {
   a.click();
   URL.revokeObjectURL(a.href);
   showToast('Data exported');
+}
+
+// Firebase setup help modal
+function openFirebaseHelp() {
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">Set Up Live Sync</div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:rgba(248,244,236,0.7);font-size:0.88rem;line-height:1.7;margin-bottom:16px;">
+        Right now your data only saves in this browser. To sync between your phone and Scott's,
+        set up a free Firebase Realtime Database:
+      </p>
+      <ol style="color:rgba(248,244,236,0.65);font-size:0.84rem;line-height:2;padding-left:20px;margin-bottom:20px;">
+        <li>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color:var(--gold);">console.firebase.google.com</a></li>
+        <li>Click <strong style="color:var(--white);">Add project</strong> &rarr; name it anything &rarr; create</li>
+        <li>In the sidebar, click <strong style="color:var(--white);">Build &rarr; Realtime Database</strong></li>
+        <li>Click <strong style="color:var(--white);">Create Database</strong> &rarr; pick any location &rarr; start in <strong style="color:var(--white);">test mode</strong></li>
+        <li>Go to <strong style="color:var(--white);">Project Settings</strong> (gear icon) &rarr; scroll to "Your apps" &rarr; click the <strong style="color:var(--white);">&lt;/&gt;</strong> web icon</li>
+        <li>Register the app (any name) &rarr; copy the <code style="color:var(--gold);background:rgba(0,0,0,0.2);padding:2px 6px;border-radius:2px;">firebaseConfig</code> object</li>
+        <li>Open <code style="color:var(--gold);background:rgba(0,0,0,0.2);padding:2px 6px;border-radius:2px;">index.html</code> and paste it where it says <code style="color:var(--gold);background:rgba(0,0,0,0.2);padding:2px 6px;border-radius:2px;">FIREBASE_CONFIG = null</code></li>
+        <li>Commit and push &mdash; both phones will sync instantly!</li>
+      </ol>
+      <p style="color:rgba(248,244,236,0.45);font-size:0.78rem;">
+        Firebase's free tier covers way more than you'll ever need for this. See DEPLOY.md for full details.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal btn-save" onclick="closeModal()">Got It</button>
+    </div>`;
+  overlay.classList.add('open');
+}
+
+// Push local data to Firebase (for first-time setup)
+function pushToFirebase() {
+  if (!db) { showToast('Firebase not configured'); return; }
+  db.ref('season').set(SEASON)
+    .then(() => showToast('Data pushed to Firebase'))
+    .catch(e => showToast('Push failed: ' + e.message));
 }
 
 // Import data from JSON
@@ -1163,11 +1322,13 @@ function importData() {
 
 <!-- ADMIN BAR -->
 <div class="admin-bar">
-  <div class="admin-bar-left">Season data saved in your browser</div>
+  <div class="admin-bar-left" id="sync-status">
+    <span class="sync-dot local"></span>Checking sync&hellip;
+  </div>
   <div class="admin-bar-actions">
-    <button class="edit-btn" onclick="exportData()" style="font-size:0.65rem;">Export Data</button>
-    <button class="edit-btn" onclick="importData()" style="font-size:0.65rem;">Import Data</button>
-    <button class="edit-btn" onclick="resetAll()" style="font-size:0.65rem;border-color:rgba(180,60,60,0.4);color:#f4a0a0;">Reset All</button>
+    <button class="edit-btn" onclick="exportData()" style="font-size:0.65rem;">Export</button>
+    <button class="edit-btn" onclick="importData()" style="font-size:0.65rem;">Import</button>
+    <button class="edit-btn" onclick="resetAll()" style="font-size:0.65rem;border-color:rgba(180,60,60,0.4);color:#f4a0a0;">Reset</button>
   </div>
 </div>
 
