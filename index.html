@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>2026 Golf Season — Two-Man Tour</title>
-  <meta name="description" content="Season-long two-man golf competition. Schedule, standings, handicaps, and event details.">
+  <meta name="description" content="Season-long two-man golf competition. Schedule, standings, and event details.">
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -151,31 +151,19 @@
       font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
       color: rgba(248,244,236,0.4); margin-bottom: 24px;
     }
-    .handicap-row {
+    .stat-row {
       display: flex; justify-content: center; gap: 32px; padding: 20px 0;
       border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 20px;
     }
-    .handicap-item { text-align: center; }
-    .handicap-value {
+    .stat-item { text-align: center; }
+    .stat-value {
       font-family: 'Playfair Display', serif; font-size: 2.2rem;
       font-weight: 700; color: var(--gold); line-height: 1;
     }
-    .handicap-label {
+    .stat-label {
       font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
       color: rgba(248,244,236,0.4); margin-top: 4px;
     }
-    .ghin-badge {
-      display: inline-block; background: rgba(201,168,76,0.15);
-      border: 1px solid rgba(201,168,76,0.3); padding: 8px 16px;
-      border-radius: 2px; font-size: 0.78rem; color: var(--gold-light); margin-top: 16px;
-    }
-    .ghin-link {
-      display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
-      padding: 8px 16px; font-size: 0.75rem; letter-spacing: 1px;
-      color: var(--gold); border: 1px solid rgba(201,168,76,0.25);
-      border-radius: 2px; text-decoration: none; transition: all 0.2s;
-    }
-    .ghin-link:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
 
     /* ─── EDIT BUTTON ──────────────────────────────────── */
     .edit-btn {
@@ -293,7 +281,6 @@
       letter-spacing: 2px; text-transform: uppercase;
       padding: 3px 10px; border-radius: 2px; white-space: nowrap;
     }
-    .tag-preseason { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
     .tag-opener    { background: rgba(46,112,82,0.4); color: #7edab4; border: 1px solid rgba(126,218,180,0.3); }
     .tag-major     { background: rgba(180,60,60,0.25); color: #f4a0a0; border: 1px solid rgba(244,160,160,0.3); }
     .tag-signature { background: rgba(100,100,200,0.2); color: #a0b0f4; border: 1px solid rgba(160,176,244,0.3); }
@@ -410,6 +397,34 @@
       font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
       color: var(--gold); margin-bottom: 12px; font-weight: 600;
     }
+    .event-booking {
+      margin-top: 28px; padding: 22px 24px; border-radius: 4px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(201,168,76,0.18);
+    }
+    .event-scorecard {
+      margin-top: 28px; padding: 22px 24px; border-radius: 4px;
+      background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+      text-align: center;
+    }
+    .scorecard-image {
+      max-width: 100%; max-height: 320px; border-radius: 4px;
+      border: 1px solid var(--border); cursor: zoom-in;
+    }
+    .booking-alert {
+      margin-bottom: 24px; padding: 14px 20px; border-radius: 4px;
+      font-size: 0.88rem; line-height: 1.5;
+    }
+    .booking-alert.warn {
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold-light);
+    }
+    .booking-alert.critical {
+      background: rgba(180,60,60,0.12);
+      border: 1px solid rgba(180,60,60,0.5);
+      color: #f4d4a0;
+    }
     .event-body p {
       font-size: 0.88rem; color: rgba(248,244,236,0.72); line-height: 1.75; margin-bottom: 14px;
     }
@@ -523,17 +538,16 @@
 const DEFAULT_SEASON = {
   year: 2026,
   players: {
-    p1: { name: "Nick",  ghin: "", handicapIndex: null },
-    p2: { name: "Scott", ghin: "", handicapIndex: null },
+    p1: { name: "Nick" },
+    p2: { name: "Scott" },
   },
   events: [
-    { id:"hangover", name:"Masters Hangover Round",     date:"April 18, 2026",     course:"Flexible local course", format:"Fun round — no official points", type:"preseason", maxPts:0,   winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
-    { id:"opener",   name:"Opening Tournament",         date:"May 2, 2026",        course:"Stonewall Orchard",     format:"18-hole stroke play",           type:"opener",    maxPts:100, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
-    { id:"major1",   name:"First Major",                date:"June 6, 2026",       course:"ThunderHawk",           format:"18-hole stroke play (+ optional pressure loop)", type:"major", maxPts:250, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
-    { id:"sig1",     name:"Bittersweet Redemption Round",date:"July 18, 2026",     course:"Bittersweet",           format:"18-hole match play",            type:"signature", maxPts:150, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
-    { id:"major2",   name:"Second Major",               date:"August 22, 2026",    course:"Bowes Creek",           format:"18-hole stroke play",           type:"major",     maxPts:300, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
-    { id:"sig2",     name:"Signature Round 2",          date:"September 19, 2026", course:"Chalet Hills",          format:"Front 9 match play · Back 9 stroke play", type:"signature", maxPts:150, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
-    { id:"final",    name:"Final Major",                date:"October 10, 2026",   course:"Stonewall Orchard",     format:"18-hole final major",           type:"major",     maxPts:400, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"opener",   name:"Opening Tournament",         date:"May 2, 2026",        isoDate:"2026-05-02", bookBy:"2026-04-18", teeTime:"",  scorecardPhoto:null, course:"Stonewall Orchard",     format:"18-hole stroke play",           type:"opener",    maxPts:100, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"major1",   name:"First Major",                date:"June 20, 2026",      isoDate:"2026-06-20", bookBy:"2026-06-13", teeTime:"",  scorecardPhoto:null, course:"ThunderHawk",           format:"18-hole stroke play",           type:"major",     maxPts:250, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"sig1",     name:"Bittersweet Redemption Round",date:"July 25, 2026",     isoDate:"2026-07-25", bookBy:"2026-07-11", teeTime:"",  scorecardPhoto:null, course:"Bittersweet",           format:"18-hole match play",            type:"signature", maxPts:150, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"major2",   name:"Second Major",               date:"August 22, 2026",    isoDate:"2026-08-22", bookBy:"2026-08-08", teeTime:"",  scorecardPhoto:null, course:"Bowes Creek",           format:"18-hole stroke play",           type:"major",     maxPts:300, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"sig2",     name:"Signature Round 2",          date:"September 19, 2026", isoDate:"2026-09-19", bookBy:"2026-09-12", teeTime:"",  scorecardPhoto:null, course:"Chalet Hills",          format:"18-hole match play",            type:"signature", maxPts:150, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
+    { id:"final",    name:"Final Major",                date:"October 10, 2026",   isoDate:"2026-10-10", bookBy:"2026-09-10", teeTime:"",  scorecardPhoto:null, course:"Cog Hill #4 (Dubsdread)", format:"18-hole stroke play",         type:"major",     maxPts:400, winner:null, p1pts:0, p2pts:0, p1score:null, p2score:null, note:null },
   ],
 };
 
@@ -633,8 +647,8 @@ function updateSyncStatus(status) {
 function totalPts(who) { return SEASON.events.reduce((s,e) => s + (who==='p1' ? e.p1pts : e.p2pts), 0); }
 function nextEvent() { return SEASON.events.find(e => e.winner === null); }
 function eventsPlayed() { return SEASON.events.filter(e => e.winner !== null).length; }
-const tagClass = { preseason:'tag-preseason', opener:'tag-opener', major:'tag-major', signature:'tag-signature' };
-const tagLabel = { preseason:'Pre-Season', opener:'Opener', major:'Major', signature:'Signature' };
+const tagClass = { opener:'tag-opener', major:'tag-major', signature:'tag-signature' };
+const tagLabel = { opener:'Opener', major:'Major', signature:'Signature' };
 
 // Edit pencil SVG
 const PENCIL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`;
@@ -652,10 +666,125 @@ function render() {
   renderHero();
   renderPlayers();
   renderNextUp();
+  renderBookingAlert();
   renderSchedule();
   renderStandings();
   renderEvents();
   renderPoints();
+}
+
+// ── Booking countdown ─────────────────────────────────
+function renderBookingAlert() {
+  const el = document.getElementById('booking-alert');
+  if (!el) return;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const upcoming = SEASON.events
+    .filter(e => e.winner === null && e.bookBy)
+    .map(e => {
+      const bd = new Date(e.bookBy + 'T00:00:00');
+      const ed = e.isoDate ? new Date(e.isoDate + 'T00:00:00') : null;
+      const daysUntilBook = Math.round((bd - now) / 86400000);
+      const daysUntilEvent = ed ? Math.round((ed - now) / 86400000) : null;
+      return { e, bd, daysUntilBook, daysUntilEvent };
+    })
+    .filter(x => x.daysUntilEvent === null || x.daysUntilEvent >= 0)
+    .sort((a,b) => a.bd - b.bd);
+
+  if (upcoming.length === 0) { el.innerHTML = ''; return; }
+
+  // Find the most urgent: anything within 7 days of bookBy, OR overdue (past bookBy but event still upcoming)
+  const urgent = upcoming.find(x => x.daysUntilBook <= 7);
+  if (!urgent) { el.innerHTML = ''; return; }
+
+  let label, tone;
+  if (urgent.daysUntilBook < 0) {
+    const overdue = Math.abs(urgent.daysUntilBook);
+    label = `Booking window for <strong>${urgent.e.name}</strong> opened ${overdue} day${overdue===1?'':'s'} ago — book now`;
+    tone = 'critical';
+  } else if (urgent.daysUntilBook === 0) {
+    label = `Booking window for <strong>${urgent.e.name}</strong> opens <strong>today</strong> — be online when it flips`;
+    tone = 'critical';
+  } else {
+    label = `Booking window for <strong>${urgent.e.name}</strong> opens in <strong>${urgent.daysUntilBook} day${urgent.daysUntilBook===1?'':'s'}</strong> (${urgent.e.bookBy})`;
+    tone = 'warn';
+  }
+
+  el.innerHTML = `<div class="booking-alert ${tone}">&#128197; ${label} &middot; <em>${urgent.e.course}</em></div>`;
+}
+
+// ── Calendar export (.ics) ────────────────────────────
+function exportCalendar() {
+  const pad = n => String(n).padStart(2,'0');
+  const fmtICS = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+  const parseTeeTime = (timeStr) => {
+    if (!timeStr) return null;
+    const m = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?$/);
+    if (!m) return null;
+    let h = parseInt(m[1], 10);
+    const min = parseInt(m[2], 10);
+    const period = (m[3] || '').toUpperCase();
+    if (period === 'PM' && h < 12) h += 12;
+    if (period === 'AM' && h === 12) h = 0;
+    return { h, min };
+  };
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//2026 Two-Man Tour//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH'
+  ];
+
+  // One event per round
+  SEASON.events.forEach(e => {
+    if (!e.isoDate) return;
+    const tee = parseTeeTime(e.teeTime);
+    // Default to 9am local if no tee time entered. Use local time → UTC by manual offset assumption skipped; emit floating-time event instead
+    const h = tee ? tee.h : 9;
+    const m = tee ? tee.min : 0;
+    const start = new Date(`${e.isoDate}T${pad(h)}:${pad(m)}:00`);
+    const end = new Date(start.getTime() + 5 * 60 * 60 * 1000); // 5-hour block
+    const dtStart = `${start.getFullYear()}${pad(start.getMonth()+1)}${pad(start.getDate())}T${pad(start.getHours())}${pad(start.getMinutes())}00`;
+    const dtEnd = `${end.getFullYear()}${pad(end.getMonth()+1)}${pad(end.getDate())}T${pad(end.getHours())}${pad(end.getMinutes())}00`;
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:tour-2026-${e.id}@two-man-tour`);
+    lines.push(`DTSTAMP:${fmtICS(new Date())}`);
+    lines.push(`DTSTART:${dtStart}`);
+    lines.push(`DTEND:${dtEnd}`);
+    lines.push(`SUMMARY:${e.name} — ${e.course}`);
+    lines.push(`LOCATION:${e.course}`);
+    lines.push(`DESCRIPTION:${e.format}\\n${e.maxPts} pts on the line${e.teeTime ? `\\nTee time: ${e.teeTime}` : ''}`);
+    lines.push('END:VEVENT');
+  });
+
+  // Booking-window reminders (all-day on the bookBy date)
+  SEASON.events.forEach(e => {
+    if (!e.bookBy) return;
+    const d = new Date(e.bookBy + 'T00:00:00');
+    const dt = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+    const next = new Date(d.getTime() + 86400000);
+    const dtNext = `${next.getFullYear()}${pad(next.getMonth()+1)}${pad(next.getDate())}`;
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:tour-2026-book-${e.id}@two-man-tour`);
+    lines.push(`DTSTAMP:${fmtICS(new Date())}`);
+    lines.push(`DTSTART;VALUE=DATE:${dt}`);
+    lines.push(`DTEND;VALUE=DATE:${dtNext}`);
+    lines.push(`SUMMARY:Book tee time — ${e.name} (${e.course})`);
+    lines.push(`DESCRIPTION:Booking window opens for ${e.name} on ${e.date} at ${e.course}.`);
+    lines.push('END:VEVENT');
+  });
+
+  lines.push('END:VCALENDAR');
+
+  const blob = new Blob([lines.join('\r\n')], {type: 'text/calendar'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '2026-two-man-tour.ics';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Calendar exported — open the .ics to add to your phone');
 }
 
 function renderHero() {
@@ -668,29 +797,18 @@ function renderPlayers() {
   ['p1','p2'].forEach(key => {
     const p = SEASON.players[key];
     const pts = totalPts(key);
-    const hi = p.handicapIndex !== null ? Number(p.handicapIndex).toFixed(1) : '—';
-    const ghinDisplay = p.ghin || '—';
-    const ghinUrl = p.ghin ? `https://www.ghin.com/golfer/${p.ghin}` : 'https://www.ghin.com';
     grid.innerHTML += `
       <div class="player-card">
         <div style="position:absolute;top:16px;right:16px;">
           <button class="edit-btn" onclick="openPlayerModal('${key}')">${PENCIL} Edit</button>
         </div>
         <div class="player-card-name">${p.name}</div>
-        <div class="player-card-label">GHIN #${ghinDisplay}</div>
-        <div class="handicap-row">
-          <div class="handicap-item">
-            <div class="handicap-value">${hi}</div>
-            <div class="handicap-label">Handicap Index</div>
-          </div>
-          <div class="handicap-item">
-            <div class="handicap-value">${pts}</div>
-            <div class="handicap-label">Season Points</div>
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-value">${pts}</div>
+            <div class="stat-label">Season Points</div>
           </div>
         </div>
-        <div class="ghin-badge">Handicaps tracked via USGA GHIN App</div>
-        <br>
-        <a class="ghin-link" href="${ghinUrl}" target="_blank" rel="noopener">View GHIN Profile &rarr;</a>
       </div>`;
   });
 }
@@ -721,18 +839,18 @@ function renderSchedule() {
       ? `<span style="color:rgba(248,244,236,0.35);font-style:italic;font-size:0.85rem;">—</span>`
       : `<div class="pts-badge">${e.maxPts}</div><div class="pts-label">pts</div>`;
     let resultCell = `<button class="result-edit-btn" onclick="openEventModal(${i})">${PENCIL} Enter</button>`;
-    if (played && e.type !== 'preseason') {
+    if (played) {
       const winnerName = e.winner === 'tie' ? 'Tied' : SEASON.players[e.winner].name;
       resultCell = `<span class="result-winner">${winnerName}</span>`;
       if (e.note) resultCell += `<br><span style="font-size:0.72rem;color:rgba(248,244,236,0.4);">${e.note}</span>`;
       resultCell += `<br><button class="result-edit-btn" style="margin-top:6px;" onclick="openEventModal(${i})">${PENCIL} Edit</button>`;
-    } else if (played && e.type === 'preseason') {
-      resultCell = `<span style="font-size:0.75rem;color:rgba(248,244,236,0.35);">Played</span>`;
-      resultCell += `<br><button class="result-edit-btn" style="margin-top:4px;" onclick="openEventModal(${i})">${PENCIL} Edit</button>`;
     }
+    const teeLine = e.teeTime
+      ? `<div style="font-size:0.72rem;color:var(--gold-light);margin-top:4px;">&#9201; ${e.teeTime}</div>`
+      : '';
     tbody.innerHTML += `
       <tr class="${rowClass}">
-        <td>${e.date}</td>
+        <td>${e.date}${teeLine}</td>
         <td>
           <div style="margin-bottom:6px;"><strong style="color:var(--white);">${e.name}</strong></div>
           <span class="event-tag ${tagClass[e.type]}">${tagLabel[e.type]}</span>
@@ -786,47 +904,47 @@ function renderStandings() {
 
 // Event details content
 const EVENT_DETAILS = {
-  hangover: {
-    c1t:'Purpose & Intent',
-    c1:`<p>This is the round after the Masters. No season points, no overthinking — just one round to shake off rust and build anticipation for the official opener.</p><p>First GHIN post of the season. Set or confirm starting handicaps.</p>`,
-    c2t:'Rules',
-    c2:`<ul class="rules-list"><li>No official points awarded</li><li>Light side bets only</li><li>Post score to GHIN</li><li>Optional: loser buys post-round drinks</li></ul>`
-  },
   opener: {
     c1t:'Why This Course',
-    c1:`<p>Stonewall Orchard feels like a real event. Enough challenge and polish to make the season feel official from day one.</p><div class="format-badge">&#9971; 18-hole stroke play &middot; Gross score wins</div>`,
+    c1:`<p>Stonewall Orchard feels like a real event. Enough challenge and polish to make the season feel official from day one.</p><div class="format-badge">&#9971; 18-hole stroke play &middot; Lowest gross wins</div>`,
     c2t:'Objectives',
-    c2:`<ul class="rules-list"><li>Officially kick off the 2026 season</li><li>Set the first standings entry</li><li>Post scores to GHIN</li></ul>`
+    c2:`<ul class="rules-list"><li>Officially kick off the 2026 season</li><li>Set the first standings entry</li><li>Log scores in 18Birdies</li></ul>`,
+    booking:`<ul class="rules-list"><li><strong style="color:var(--gold);">Book by:</strong> April 18, 2026 (≈14-day window opens)</li><li><strong style="color:var(--gold);">Target time:</strong> 9:00–11:00 AM Saturday tee</li><li>Online: <a href="https://stonewallorchard.com" target="_blank" rel="noopener" style="color:var(--gold);">stonewallorchard.com</a></li><li>Spring Saturdays usually have prime morning availability — lock in early to avoid the 7am dawn patrol or 1pm afternoon slots</li><li>Cart vs walk: cart-mandatory weekend mornings; walking opens up after early afternoon</li></ul>`
   },
   major1: {
     c1t:'Why This Course',
-    c1:`<p>ThunderHawk delivers major-championship energy. The cleanest local-ish major venue.</p><div class="format-badge">&#127942; Option A: 18-hole stroke play</div><div class="format-badge">&#128293; Option B: 18 + 9-hole pressure loop</div>`,
+    c1:`<p>ThunderHawk delivers major-championship energy. The cleanest local-ish major venue.</p><div class="format-badge">&#127942; 18-hole stroke play</div><p>Lowest gross wins. The first true test of the season.</p>`,
     c2t:'Major Rules',
-    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>All scores posted to GHIN</li></ul>`
+    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>All scores logged in 18Birdies</li></ul>`,
+    booking:`<ul class="rules-list"><li><strong style="color:var(--gold);">Book by:</strong> June 6, 2026 (Lake County resident window) / June 13, 2026 (non-resident, ≈7-day)</li><li><strong style="color:var(--gold);">Target time:</strong> 8:30–10:30 AM Saturday</li><li>Online: <a href="https://www.lcfpd.org/golf" target="_blank" rel="noopener" style="color:var(--gold);">lcfpd.org/golf</a> (Lake County Forest Preserves system)</li><li>One of the most popular tee sheets in Lake County — June Saturdays book the moment the window flips</li><li>Set a phone alarm for the day the window opens; refresh online tee-time portal at midnight</li><li>Replay 9 (the optional pressure loop) bookable separately on the day if available</li></ul>`
   },
   sig1: {
     c1t:'The Story',
-    c1:`<p>The emotional centerpiece of the season. Last year ended badly here. This is a return, a test of composure, a built-in story point.</p><div class="format-badge">&#9876; 18-hole match play</div>`,
+    c1:`<p>The emotional centerpiece of the season. Last year ended badly here. This is a return, a test of composure, a built-in story point.</p><div class="format-badge">&#9876; 18-hole match play &middot; Hole-by-hole battle</div>`,
     c2t:'Signature Rules',
-    c2:`<ul class="rules-list"><li><strong style="color:var(--gold);">No quitting under any circumstances</strong></li><li>All putts holed out</li><li>Quitting = automatic event loss</li><li>Optional: 3-hole deduction for quitting</li><li>Post adjusted gross to GHIN</li></ul>`
+    c2:`<ul class="rules-list"><li><strong style="color:var(--gold);">No quitting under any circumstances</strong></li><li>Quitting = automatic event loss</li><li>Optional: 3-hole deduction for quitting</li><li>Concessions allowed; match continues until decided</li><li>Log adjusted gross in 18Birdies</li></ul>`,
+    booking:`<ul class="rules-list"><li><strong style="color:var(--gold);">Book by:</strong> July 11, 2026 (≈14-day online window)</li><li><strong style="color:var(--gold);">Target time:</strong> 7:30–8:30 AM (avoid mid-summer afternoon heat &amp; pace-of-play creep)</li><li>Online: <a href="https://www.bittersweetgolf.com" target="_blank" rel="noopener" style="color:var(--gold);">bittersweetgolf.com</a></li><li>Mid-summer Saturday pace can stretch to 5 hrs — earlier the better</li><li>Bring water; the back nine is exposed</li></ul>`
   },
   major2: {
     c1t:'Why This Course',
     c1:`<p>Bowes Creek feels elevated while providing a different test than ThunderHawk. Keeps the major circuit fresh heading into the stretch.</p><div class="format-badge">&#127942; 18-hole stroke play</div><p>At 300 points, the heaviest event before the finale.</p>`,
     c2t:'Major Rules',
-    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>All scores posted to GHIN</li></ul>`
+    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>All scores logged in 18Birdies</li></ul>`,
+    booking:`<ul class="rules-list"><li><strong style="color:var(--gold);">Book by:</strong> August 8, 2026 (≈14-day window)</li><li><strong style="color:var(--gold);">Target time:</strong> 9:00–10:30 AM Saturday</li><li>Online: <a href="https://www.bowescreekcountryclub.com" target="_blank" rel="noopener" style="color:var(--gold);">bowescreekcountryclub.com</a></li><li>August conditioning is usually peak — fairways firm, greens quick</li><li>Twilight rates kick in early afternoon if you'd rather book a cheaper replay</li></ul>`
   },
   sig2: {
-    c1t:'A Split Format',
-    c1:`<p>A unique two-phase format. The front nine is a battle; the back nine is a grind.</p><div class="format-badge">&#9876; Front 9: match play</div><div class="format-badge">&#9997; Back 9: stroke play</div>`,
+    c1t:'The Format',
+    c1:`<p>A pure match-play closer to the regular season. Hole-by-hole pressure, a chance to seize momentum heading into the finale.</p><div class="format-badge">&#9876; 18-hole match play &middot; Holes won and lost</div>`,
     c2t:'Why It Works',
-    c2:`<ul class="rules-list"><li>Natural in-round pivot point</li><li>Tests aggression and discipline</li><li>Combined result determines winner</li><li>Post full 18-hole score to GHIN</li></ul>`
+    c2:`<ul class="rules-list"><li>Direct head-to-head pressure on every hole</li><li>Concessions allowed; match ends when decided</li><li>Last chance to swing momentum before the Final Major</li><li>Log full 18-hole score in 18Birdies</li></ul>`,
+    booking:`<ul class="rules-list"><li><strong style="color:var(--gold);">Book by:</strong> September 12, 2026 (≈7-day standard window)</li><li><strong style="color:var(--gold);">Target time:</strong> 9:00–11:00 AM Saturday — fall color is at its best mid-morning</li><li>Online: <a href="https://www.chaletgolf.com" target="_blank" rel="noopener" style="color:var(--gold);">chaletgolf.com</a></li><li>September Saturdays book solid in peak fall golf — set an alarm for the window opening</li><li>Hilly course — cart strongly recommended for match-play pace</li></ul>`
   },
   final: {
     c1t:'The Season Finale',
-    c1:`<p>The same course that opened the season closes it. At 400 points, the Final Major can swing the entire standings. No lead is safe.</p><div class="format-badge">&#127942; 18-hole final major</div>`,
+    c1:`<p>Cog Hill #4 (Dubsdread). Hosted the BMW Championship for years on the PGA Tour and walks like a real major venue. At 400 points, no lead is safe.</p><div class="format-badge">&#127942; 18-hole stroke play</div><p>The tournament-grade conditioning, the depth of the rough, the demand of every approach — this is the right room to crown the season.</p>`,
     c2t:'Major Rules',
-    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>400 points: a single round can reverse the season</li><li>Final GHIN post of the competitive season</li></ul>`
+    c2:`<ul class="rules-list"><li>Putt everything out — no gimmies</li><li>Play the ball down</li><li>No soft concessions</li><li>400 points: a single round can reverse the season</li><li>Final 18Birdies log of the competitive season</li></ul>`,
+    booking:`<ul class="rules-list"><li><strong style="color:var(--gold);">Book by:</strong> September 10, 2026 — be online <em>at midnight</em> when the 30-day window opens</li><li><strong style="color:var(--gold);">Target time:</strong> 9:00–11:00 AM Saturday for fall color &amp; firm conditions</li><li>Online: <a href="https://coghillgolf.com" target="_blank" rel="noopener" style="color:var(--gold);">coghillgolf.com</a> · or call the pro shop for group bookings (sometimes earlier window with deposit)</li><li><strong style="color:var(--gold);">October Saturdays at Dubsdread are the most contested tee times in Chicago public golf</strong> — set two reminders</li><li>Walking allowed — strongly consider walking for the full major-venue experience</li><li>Greens fees ≈$200 incl. cart in peak season — budget accordingly</li><li><strong style="color:var(--gold);">Backup plan:</strong> if you can't get a Cog Hill #4 time, immediately try Cantigny or Mistwood for the same date</li></ul>`
   }
 };
 
@@ -860,9 +978,30 @@ function renderEvents() {
             <div><div class="event-section-title">${d.c1t}</div>${d.c1}</div>
             <div><div class="event-section-title">${d.c2t}</div>${d.c2}</div>
           </div>
+          ${d.booking ? `<div class="event-booking"><div class="event-section-title">&#128197; Tee Time &amp; Booking</div>${d.booking}${e.teeTime ? `<div style="margin-top:10px;padding:10px 14px;background:rgba(201,168,76,0.1);border-left:3px solid var(--gold);border-radius:2px;font-size:0.85rem;color:var(--gold-light);">&#9201; Booked tee time: <strong>${e.teeTime}</strong></div>`: ''}</div>` : ''}
+          ${e.scorecardPhoto ? `<div class="event-scorecard"><div class="event-section-title">&#128221; Scorecard</div><img src="${e.scorecardPhoto}" class="scorecard-image" onclick="openScorecardModal('${e.id}')"></div>` : ''}
         </div>
       </div>`;
   });
+}
+
+function openScorecardModal(eventId) {
+  const e = SEASON.events.find(x => x.id === eventId);
+  if (!e || !e.scorecardPhoto) return;
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title">${e.name} — Scorecard</div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <img src="${e.scorecardPhoto}" style="max-width:100%; max-height:70vh; border-radius:4px;">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal btn-save" onclick="closeModal()">Close</button>
+    </div>`;
+  overlay.classList.add('open');
 }
 
 function renderPoints() {
@@ -902,16 +1041,6 @@ function openPlayerModal(key) {
         <label class="field-label">Name</label>
         <input class="field-input" id="m-name" type="text" value="${p.name}" placeholder="Player name">
       </div>
-      <div class="field">
-        <label class="field-label">GHIN Number</label>
-        <input class="field-input" id="m-ghin" type="text" value="${p.ghin||''}" placeholder="e.g. 1234567">
-        <div class="field-hint">Found on your GHIN card or in the GHIN app</div>
-      </div>
-      <div class="field">
-        <label class="field-label">Current Handicap Index</label>
-        <input class="field-input" id="m-hcp" type="number" step="0.1" value="${p.handicapIndex!==null?p.handicapIndex:''}" placeholder="e.g. 14.2">
-        <div class="field-hint">Update this whenever your GHIN index changes</div>
-      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-modal btn-cancel" onclick="closeModal()">Cancel</button>
@@ -922,11 +1051,7 @@ function openPlayerModal(key) {
 
 function savePlayer(key) {
   const name = document.getElementById('m-name').value.trim();
-  const ghin = document.getElementById('m-ghin').value.trim();
-  const hcp  = document.getElementById('m-hcp').value;
   if (name) SEASON.players[key].name = name;
-  SEASON.players[key].ghin = ghin;
-  SEASON.players[key].handicapIndex = hcp !== '' ? parseFloat(hcp) : null;
   saveSeason();
   closeModal();
   render();
@@ -938,19 +1063,13 @@ function openEventModal(idx) {
   const e = SEASON.events[idx];
   const p1name = SEASON.players.p1.name;
   const p2name = SEASON.players.p2.name;
-  const isPreseason = e.type === 'preseason';
 
-  let winnerOptions = `<option value="">Not yet played</option>`;
-  if (isPreseason) {
-    winnerOptions += `<option value="played" ${e.winner==='played'?'selected':''}>Played (no points)</option>`;
-  } else {
-    winnerOptions += `
+  let winnerOptions = `<option value="">Not yet played</option>
       <option value="p1" ${e.winner==='p1'?'selected':''}>${p1name}</option>
       <option value="p2" ${e.winner==='p2'?'selected':''}>${p2name}</option>
       <option value="tie" ${e.winner==='tie'?'selected':''}>Tie / Split</option>`;
-  }
 
-  const ptsFields = isPreseason ? '' : `
+  const ptsFields = `
     <div class="field-row">
       <div class="field">
         <label class="field-label">${p1name}'s Points</label>
@@ -992,17 +1111,37 @@ function openEventModal(idx) {
           <select class="field-input" id="m-winner">${winnerOptions}</select>
         </div>
       </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Tee Time</label>
+          <input class="field-input" id="m-teetime" type="text" value="${e.teeTime||''}" placeholder="e.g. 9:42 AM">
+          <div class="field-hint">Once you've booked, drop the actual tee time here</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Book By</label>
+          <input class="field-input" id="m-bookby" type="date" value="${e.bookBy||''}">
+          <div class="field-hint">Day the booking window opens for you</div>
+        </div>
+      </div>
       ${ptsFields}
       <div class="field-row">
         <div class="field">
           <label class="field-label">${p1name}'s Score</label>
           <input class="field-input" id="m-p1score" type="number" value="${e.p1score||''}" placeholder="e.g. 87">
-          <div class="field-hint">Gross score for GHIN</div>
+          <div class="field-hint">Gross score for 18Birdies</div>
         </div>
         <div class="field">
           <label class="field-label">${p2name}'s Score</label>
           <input class="field-input" id="m-p2score" type="number" value="${e.p2score||''}" placeholder="e.g. 92">
-          <div class="field-hint">Gross score for GHIN</div>
+          <div class="field-hint">Gross score for 18Birdies</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Scorecard Photo</label>
+        <input class="field-input" id="m-scorecard" type="file" accept="image/*" capture="environment" onchange="previewScorecard(this)">
+        <div class="field-hint">Snap the signed scorecard after the round</div>
+        <div id="scorecard-preview" style="margin-top:10px;">
+          ${e.scorecardPhoto ? `<img src="${e.scorecardPhoto}" style="max-width:100%; max-height:220px; border-radius:4px; border:1px solid var(--border);"><div style="margin-top:6px;"><button class="btn-modal btn-danger" type="button" onclick="removeScorecard(${idx})" style="font-size:0.7rem; padding:4px 10px;">Remove photo</button></div>` : ''}
         </div>
       </div>
       <div class="field">
@@ -1019,7 +1158,7 @@ function openEventModal(idx) {
   overlay.classList.add('open');
 }
 
-function saveEvent(idx) {
+async function saveEvent(idx) {
   const e = SEASON.events[idx];
 
   // Save editable event details
@@ -1030,21 +1169,34 @@ function saveEvent(idx) {
   if (newCourse) e.course = newCourse;
   if (newFormat) e.format = newFormat;
 
+  const teeTime = document.getElementById('m-teetime').value.trim();
+  e.teeTime = teeTime || '';
+  const bookBy = document.getElementById('m-bookby').value;
+  e.bookBy = bookBy || e.bookBy || '';
+
   const winner = document.getElementById('m-winner').value || null;
   e.winner = winner;
 
-  if (e.type !== 'preseason') {
-    const p1pts = document.getElementById('m-p1pts');
-    const p2pts = document.getElementById('m-p2pts');
-    if (p1pts) e.p1pts = parseInt(p1pts.value) || 0;
-    if (p2pts) e.p2pts = parseInt(p2pts.value) || 0;
-  }
+  const p1pts = document.getElementById('m-p1pts');
+  const p2pts = document.getElementById('m-p2pts');
+  if (p1pts) e.p1pts = parseInt(p1pts.value) || 0;
+  if (p2pts) e.p2pts = parseInt(p2pts.value) || 0;
 
   const p1s = document.getElementById('m-p1score').value;
   const p2s = document.getElementById('m-p2score').value;
   e.p1score = p1s !== '' ? parseInt(p1s) : null;
   e.p2score = p2s !== '' ? parseInt(p2s) : null;
   e.note = document.getElementById('m-note').value.trim() || null;
+
+  // Handle scorecard photo upload
+  const scInput = document.getElementById('m-scorecard');
+  if (scInput && scInput.files && scInput.files[0]) {
+    try {
+      e.scorecardPhoto = await compressImage(scInput.files[0]);
+    } catch (err) {
+      console.warn('Scorecard photo compression failed:', err);
+    }
+  }
 
   saveSeason();
   closeModal();
@@ -1059,6 +1211,53 @@ function clearEvent(idx) {
   closeModal();
   render();
   showToast('Result cleared');
+}
+
+function previewScorecard(input) {
+  const preview = document.getElementById('scorecard-preview');
+  if (!preview) return;
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      preview.innerHTML = `<img src="${ev.target.result}" style="max-width:100%; max-height:220px; border-radius:4px; border:1px solid var(--border);">`;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeScorecard(idx) {
+  if (!confirm('Remove the scorecard photo for this event?')) return;
+  SEASON.events[idx].scorecardPhoto = null;
+  saveSeason();
+  closeModal();
+  render();
+  showToast('Photo removed');
+}
+
+// Compress an image file to a max dimension and return a base64 data URL
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        const max = 1400;
+        const ratio = Math.min(1, max / Math.max(width, height));
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = () => resolve(ev.target.result);
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 function closeModal() {
@@ -1176,11 +1375,10 @@ function importData() {
   <p class="hero-desc">
     A season-long two-man competition with a real narrative arc &mdash; tentpole majors,
     signature events, and enough structure to make every big round matter.
-    Handicaps tracked officially through GHIN.
   </p>
   <div class="divider-gold"></div>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">Events</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">6</div><div class="hero-stat-label">Events</div></div>
     <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">Majors</div></div>
     <div class="hero-stat"><div class="hero-stat-num">1,350</div><div class="hero-stat-label">Points Available</div></div>
     <div class="hero-stat"><div class="hero-stat-num" id="hero-played">0</div><div class="hero-stat-label">Events Played</div></div>
@@ -1197,8 +1395,7 @@ function importData() {
     <span class="section-label">The Competitors</span>
     <h2 class="section-title">Player Profiles</h2>
     <p class="section-intro">
-      Handicaps tracked officially through the USGA GHIN system.
-      Playing by near-official PGA-style rules all season &mdash; real scores, real handicaps.
+      Playing by near-official PGA-style rules all season &mdash; real scores, real competition.
     </p>
     <div class="players-grid" id="players-grid"></div>
   </div>
@@ -1209,7 +1406,8 @@ function importData() {
   <div class="container">
     <span class="section-label">Full Calendar</span>
     <h2 class="section-title">2026 Schedule</h2>
-    <p class="section-intro">Six months of golf, seven events, one champion.</p>
+    <p class="section-intro">Six months of golf, six events, one champion.</p>
+    <div id="booking-alert"></div>
     <div id="next-up-container"></div>
     <table class="schedule-table">
       <thead><tr>
@@ -1261,26 +1459,111 @@ function importData() {
   <div class="container">
     <span class="section-label">Standards of Play</span>
     <h2 class="section-title">Season Rules</h2>
-    <p class="section-intro">Near-official PGA-style rules, real scores posted to GHIN, no cutting corners.</p>
+    <p class="section-intro">Near-official PGA-style rules straight out of the USGA Rules of Golf. Real scores logged in 18Birdies, no cutting corners — full and fair competition every round.</p>
     <div class="rules-grid">
       <div class="rules-card">
-        <div class="rules-card-title">Scoring & Handicaps</div>
+        <div class="rules-card-title">Scoring</div>
         <ul class="rules-list">
-          <li>All scores posted to GHIN after every competitive round</li>
-          <li>Handicap Index maintained through the USGA GHIN app</li>
           <li>Gross score determines event winner unless otherwise noted</li>
           <li>Net score side bets are optional and event-specific</li>
-          <li>Pre-round handicap verification before each event</li>
+          <li>Scorecards signed and attested by both players after each round</li>
+          <li>Disputes resolved on the spot using the USGA Rules of Golf</li>
         </ul>
       </div>
       <div class="rules-card">
         <div class="rules-card-title">On-Course Standards</div>
         <ul class="rules-list">
-          <li>Putt everything out — no gimmies during official events</li>
+          <li>Putt everything out in stroke play — no gimmies</li>
           <li>Play the ball down (lift, clean, and place only if course mandates)</li>
           <li>No soft concessions in stroke play</li>
-          <li>USGA Rules of Golf apply for all rulings and drops</li>
-          <li>Scorecards signed and attested after each round</li>
+          <li>Loose impediments may be moved; ball must not move</li>
+          <li>If your ball moves at address, it's a one-stroke penalty and replace</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Out of Bounds &amp; Lost Ball</div>
+        <ul class="rules-list">
+          <li>OB or lost ball: <strong style="color:var(--gold);">stroke and distance</strong> — replay from previous spot, +1 penalty</li>
+          <li>Example: tee shot OB → hitting 3 from the tee</li>
+          <li>3-minute search limit before a ball is officially lost</li>
+          <li>White stakes mark OB; ball on the line is still in</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">When Stakes Are Missing</div>
+        <ul class="rules-list">
+          <li><strong style="color:var(--gold);">Walk the course before play.</strong> If white/yellow/red stakes are missing or inconsistent, agree on rulings on the first tee — written in 18Birdies notes</li>
+          <li><strong style="color:var(--gold);">No white stakes (OB):</strong> default to property lines, paved roads, fences, parking lots, and "out-of-play" signage as OB</li>
+          <li><strong style="color:var(--gold);">No yellow stakes (penalty area):</strong> any obvious water hazard plays as a yellow penalty area — stroke-and-distance or back-on-the-line drop (+1)</li>
+          <li><strong style="color:var(--gold);">No red stakes (lateral):</strong> any water bordering the hole laterally plays red — two-club-length drop where it last crossed (+1)</li>
+          <li>If markings disagree, the more restrictive interpretation wins (e.g., questionable OB plays as OB)</li>
+          <li>Any pre-round ruling stands for both players for the entire round — no mid-round renegotiation</li>
+          <li>Disputes in the moment: stop, talk it through, and agree before the next stroke — when in doubt, the more restrictive ruling holds</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Provisional Ball</div>
+        <ul class="rules-list">
+          <li>Announce "<strong style="color:var(--gold);">provisional</strong>" before hitting — required, or the new ball becomes the ball in play</li>
+          <li>Play the provisional if original may be OB or lost outside a penalty area</li>
+          <li>If original is found in bounds within 3 minutes, abandon the provisional</li>
+          <li>If not found, the provisional becomes the ball in play with stroke-and-distance penalty</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Penalty Areas (Water)</div>
+        <ul class="rules-list">
+          <li>Yellow stakes: stroke-and-distance, OR drop on line of entry going back as far as you like (+1)</li>
+          <li>Red stakes (lateral): same as yellow, plus a two-club-length drop from where it last crossed (+1)</li>
+          <li>You may play the ball as it lies inside a penalty area with no penalty</li>
+          <li>No grounding the club in the penalty area before the stroke</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Drops &amp; Relief</div>
+        <ul class="rules-list">
+          <li>Drop from <strong style="color:var(--gold);">knee height</strong>, within one club length, <strong style="color:var(--gold);">no closer to the hole</strong></li>
+          <li>Cart path / immovable obstruction: free relief, nearest point of complete relief + one club length, no closer to hole</li>
+          <li>Unplayable lie: +1 penalty — drop within two club lengths, on the line back, or replay from previous spot</li>
+          <li>Ground under repair / casual water: free relief, nearest point of complete relief + one club length</li>
+          <li>Embedded ball in the general area: free relief, drop within one club length, no closer to the hole</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Bunkers</div>
+        <ul class="rules-list">
+          <li>No grounding the club in the sand before the stroke</li>
+          <li>Loose impediments may be removed (no penalty if ball moves while doing so — replace it)</li>
+          <li>Unplayable in a bunker: drop in the bunker (+1) or back-on-the-line outside the bunker (+2)</li>
+          <li>Rake the bunker after every shot</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Match Play Format</div>
+        <ul class="rules-list">
+          <li>Holes are won, lost, or halved — lowest score on the hole wins it</li>
+          <li>Concessions allowed: opponents may concede a putt, hole, or the match</li>
+          <li>Match ends when one player is up more holes than remain (e.g., 4&amp;3)</li>
+          <li>If all square through 18, play sudden-death extra holes until decided</li>
+          <li>Wrong order of play: opponent may require the stroke to be replayed</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Stroke Play Format</div>
+        <ul class="rules-list">
+          <li>Lowest 18-hole gross score wins the event</li>
+          <li>Every stroke counts — putt everything out, no concessions</li>
+          <li>One-shot penalty for any rule infraction unless otherwise noted</li>
+          <li>Ties broken by sudden-death playoff starting at hole 1</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Format Schedule</div>
+        <ul class="rules-list">
+          <li><strong style="color:var(--gold);">Stroke play:</strong> Opening, First Major, Second Major, Final Major</li>
+          <li><strong style="color:var(--gold);">Match play:</strong> Bittersweet Redemption, Signature Round 2</li>
+          <li>First &amp; Final Major are always pure stroke play</li>
+          <li>Even mix of stroke and match across the rest of the slate</li>
         </ul>
       </div>
       <div class="rules-card">
@@ -1288,8 +1571,8 @@ function importData() {
         <ul class="rules-list">
           <li>Three majors carry the heaviest point values (250, 300, 400)</li>
           <li>Strictest conditions: no gimmies, no concessions, ball played down</li>
+          <li>All three majors are 18-hole stroke play</li>
           <li>Final Major at 400 points can swing the entire season</li>
-          <li>Optional expanded format for First Major</li>
         </ul>
       </div>
       <div class="rules-card">
@@ -1297,8 +1580,41 @@ function importData() {
         <ul class="rules-list">
           <li>Bittersweet: <strong style="color:var(--gold);">No quitting under any circumstances</strong></li>
           <li>Quitting at Bittersweet = automatic event loss + optional 3-hole deduction</li>
-          <li>All putts holed out at signature events</li>
-          <li>Chalet Hills: front 9 match play, back 9 stroke play</li>
+          <li>Both signature events played as 18-hole match play</li>
+          <li>Concessions allowed but match must be played to a decision</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Pace &amp; Etiquette</div>
+        <ul class="rules-list">
+          <li>Ready golf encouraged; honors taken on the tee in stroke play</li>
+          <li>Repair pitch marks, replace divots, rake bunkers</li>
+          <li>No advice between competitors except in foursomes/team formats</li>
+          <li>Phones silent on the course; rangefinders allowed (no slope in competition)</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Weather &amp; Rainouts</div>
+        <ul class="rules-list">
+          <li><strong style="color:var(--gold);">Round counts as official</strong> if at least <strong>13 holes</strong> are completed by both players</li>
+          <li>If 12 holes or fewer: round is voided and the event must be replayed</li>
+          <li>If a major (≥250 pts) is voided, the makeup must happen within <strong>21 days</strong>; if not playable, points roll over to the next major (added to that event's pot)</li>
+          <li>If a non-major is voided and can't be rescheduled, the event awards <strong>0 points</strong> to both players</li>
+          <li>Lightning: clear the course immediately, no exceptions — partial rounds resume from the same hole if course reopens within 90 minutes</li>
+          <li>Replay scheduling: trailing player in season standings picks the makeup date from agreed-upon options</li>
+          <li>Casual water and lift/clean/place are in effect under wet conditions when the course mandates</li>
+        </ul>
+      </div>
+      <div class="rules-card">
+        <div class="rules-card-title">Season Tiebreakers</div>
+        <ul class="rules-list">
+          <li>If point totals are tied at season end, tiebreakers apply <strong style="color:var(--gold);">in this order</strong>:</li>
+          <li><strong style="color:var(--gold);">1.</strong> Winner of the Final Major takes The Cup outright</li>
+          <li><strong style="color:var(--gold);">2.</strong> If Final Major was tied/split: most majors won across the season</li>
+          <li><strong style="color:var(--gold);">3.</strong> Best head-to-head record (event wins minus event losses)</li>
+          <li><strong style="color:var(--gold);">4.</strong> Lowest total gross strokes across all completed events</li>
+          <li><strong style="color:var(--gold);">5.</strong> Sudden-death playoff at Cog Hill #4, hole 1 onward, soonest available date both players can make</li>
+          <li>Single-event ties (e.g., tied gross score in stroke play): split the points evenly between both players</li>
         </ul>
       </div>
     </div>
@@ -1326,6 +1642,7 @@ function importData() {
     <span class="sync-dot local"></span>Checking sync&hellip;
   </div>
   <div class="admin-bar-actions">
+    <button class="edit-btn" onclick="exportCalendar()" style="font-size:0.65rem;">Calendar</button>
     <button class="edit-btn" onclick="exportData()" style="font-size:0.65rem;">Export</button>
     <button class="edit-btn" onclick="importData()" style="font-size:0.65rem;">Import</button>
     <button class="edit-btn" onclick="resetAll()" style="font-size:0.65rem;border-color:rgba(180,60,60,0.4);color:#f4a0a0;">Reset</button>
